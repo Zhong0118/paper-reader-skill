@@ -1,0 +1,5 @@
+.DS_Store
+.paper-reader/
+__pycache__/
+*.pyc
+*.zip
