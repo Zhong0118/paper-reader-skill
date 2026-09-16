@@ -21,9 +21,9 @@ Context research is paper-centered, not an open-ended literature review. It sear
 
 ## Coverage and persistence
 
-Reading depth and archival output are independent. Archive saves existing results and gaps; full explicitly fills necessary analysis. Stage status is scoped to material actually read, tied to the paper version, and supports partial or blocked work. Legacy completed_stages is only a hint. Source changes invalidate affected dependent assessments and notes while preserving unrelated findings and user annotations.
+Reading depth and archival output are independent. Compact archive saves existing results and gaps; learning archive organizes standard study notes and supplements useful light context; full explicitly fills necessary analysis. Stage status is scoped to material actually read, tied to the paper version, and supports partial or blocked work. Legacy completed_stages is only a hint. Source changes invalidate affected dependent assessments and notes while preserving unrelated findings and user annotations.
 
-Ordinary notes are compact. Expanded sections are selected for an explicitly requested full record. External search is question-driven, with no source quota; stable findings are reused and current claims refreshed.
+Notes have compact, learning and full formats. Deep reading defaults to light research; explicit paper-only reading suppresses external context. Research types none/light/targeted/full describe scope rather than a strict ranking. Targeted questions can deepen existing full coverage. Stored depths reflect actual work, with partial/blocked states tracked separately. Search remains question-driven without source quotas; stable findings are reused and current claims refreshed.
 
 ## Shared figures
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 - 2026-09-17
+
+- Added external research depths: none / light / targeted / full; deep defaults to light context.
+- Added explicit deep-internal reading and source-restriction precedence.
+- Added compact / learning / full notes; knowledge-base and Obsidian requests default to Standard Learning Note.
+- Kept save-only requests compact without new analysis or research.
+- Separated requested depth from actual execution/coverage and note artifacts.
+- Preserved targeted follow-ups and freshness checks even after full research, without paper quotas.
+- Retained version invalidation, scoped stages, selective figure handling and paper-type-aware critique.
+
 ## 0.3.0 - 2026-09-17
 
 - Separated reading depth from archiving; compact notes save existing findings and gaps, while full records are explicit.

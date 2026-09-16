@@ -9,9 +9,11 @@ description: Use when the user wants to turn an already-read paper and its relat
 把当前论文、教学解释、Claim–Evidence、方法学批判和相关论文脉络整理成一份以后真的会回来看的**论文学习档案 / 知识库记录**。它不是摘要换皮，也不是第六次重新分析全文。
 
 ## Paper Context 复用规则
-先读 `references/paper-context.md`。优先使用已有 Context，保存已读范围、可靠结论和未完成项。普通 archive 不补外部检索、教学或批判来填模板；只有用户明确要求“补齐分析/完整学习档案”才由入口调度缺失阶段。材料或工具不足时保留缺口。
+先读 `references/paper-context.md`。优先使用已有 Context，保存已读范围、可靠结论和未完成项。按 compact / learning / full 选择下面的笔记契约。compact 不补研究；learning 复用内部分析并在有价值且允许时补 light context；full 由入口调度六阶段。Learning Note 不自动等于完整精读：内部分析缺失时标明未读/未评估；用户同时要求读懂或补齐方法时才调度对应缺失阶段。材料或工具不足时保留缺口，不能用外部结果替代未读原文。
 
-## 默认紧凑 Markdown 笔记
+## Compact Note
+
+“保存一下 / 把刚才内容记下来 / 简单存一下”默认 compact。只保存已有结果，不启动新检索、缺失阶段、critique 或 glossary。
 
 1. 论文卡片：身份、版本、来源、阅读日期与已读范围。
 2. 快速回忆与研究问题。
@@ -23,7 +25,55 @@ description: Use when the user wants to turn an already-read paper and its relat
 
 缺少某部分时标注未读/未评估，不能为填充章节编造内容。根据已有材料合并或省略空章节。
 
-## 可选完整学习档案
+## Standard Learning Note
+
+“整理成论文笔记 / 放进知识库 / 做成 Obsidian 笔记 / 以后复习用”默认 learning。显式要求“只保存已有内容 / 不新增分析”时 compact 优先于 Obsidian 等格式词。
+
+这是标准长期学习格式。复用已有 light 或更广但相关的研究覆盖；缺失且有价值时由 paper-context-research 补 light。禁止外部资料、工具受限或暂无可靠材料时，保留内部笔记与外部缺口，不强行满足栏目。
+
+按实际材料组织以下部分；理论/综述论文改用证明或文献综合证据，不硬套实验项目。核心内部内容缺失时标题或卡片标明“部分阅读笔记”。
+
+### 0. Paper Card
+身份、作者、Venue、年份、DOI/arXiv、source version、已知 code/dataset、阅读日期、实际阅读范围。
+
+### 1. Five-Minute Recall
+一句话讲清论文、研究问题、核心方法思想、真正重要的贡献、关键结果及为什么值得记住。
+
+### 2. Research Question & Motivation
+作者要解决什么、为什么重要、已有方法为何不够、核心假设。
+
+### 3. Method
+输入 → 核心处理 → 中间状态 → 输出；整理模块及关系、最重要公式、前置知识、直觉解释与易混点。
+
+### 4. Experiments & Evidence
+按类型整理 Dataset/Baseline/Metric/Control/Ablation 或证明条件，核心 Figure/Table 与 Claim–Evidence。
+
+### 5. What It Proves / Does Not Prove
+有证据支持的结论、未证明部分与过度外推风险；未做 evidence review 时明确未评估。
+
+### 6. Strengths & Limitations
+区分作者自述局限、内部分析发现、外部研究验证的局限；不能为完整性虚构 critique。
+
+### 7. Research Context
+呈现有用的 light context：关键前置工作 → 当前论文改变了什么 → 代表性后续工作，以及领域 Survey。按价值加 benchmark、作者前作、竞争路线或当前发展。明确外部资料不可用或被排除的部分。
+
+### 8. Related Paper Comparison
+只比较已核验且真正重要的相关论文：
+
+| Paper | Year | Core idea | 与本文关系 | 主要差异 | 为什么值得读 |
+|---|---:|---|---|---|---|
+
+### 9. Learning Notes
+模型总结的易错知识点、用户自己的笔记、用户疑问和仍未解决问题分开记录；不把模型观点冒充用户观点。
+
+### 10. Further Reading
+先读 → 再读 → 深入读，按实际价值选择，说明每篇为什么值得读，不凑数量。
+
+### 11. Sources
+目标论文、相关论文、Survey、benchmark/project/dataset 页面；外部关键判断回指 source_ledger，保留未完成项。
+
+## Full Learning Record
+
 
 用户明确要求完整档案时使用以下菜单；按论文类型与实际材料选择章节，不要求填满。技术发展脉络、作者研究路线、同期竞争、当前 SOTA、Benchmark、后续工作、推荐进一步阅读、Glossary 等只在相关时展开。
 
@@ -101,6 +151,7 @@ Dataset / Baseline / Metric / Control / Ablation；关键 Figure/Table 的结果
 保存笔记后验证图片文件存在、Markdown 链接能从笔记目录解析，图注/图号/来源版本正确。若没有可用提取或查看工具，保存定位与缺口，不声称已经保存或核验图片。
 
 ## 写作要求
+- 生成后更新 note_depth、note_metadata 的笔记路径/版本/日期及 stage_status；缺口保留，深度标签不代表所有章节已完成。
 - 默认中文，术语首次出现保留英文原名。
 - 以复习、复现、比较和长期学习为导向，不写成“背景很长、方法很短”的摘要。
 - 数字、公式、实验结论保留论文位置；外部判断保留 source id。

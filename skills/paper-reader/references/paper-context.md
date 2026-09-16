@@ -22,6 +22,8 @@ source_hash: # 本地文件可用时记录，用于检测材料变化
 source_quality: good|degraded|poor
 retrieved_at:
 stage_status: {} # 按下文记录范围；completed_stages 仅用于兼容旧记录
+context_depth: none # none | light | targeted | full
+note_depth: none # none | compact | learning | full
 ---
 
 ## source_map
@@ -106,6 +108,18 @@ stage_status: {} # 按下文记录范围；completed_stages 仅用于兼容旧�
 - `[外部文献]`：来自其他论文、Survey、benchmark 页面或权威项目资料。
 - `[后续研究]`：时间上晚于目标论文，用于说明后续验证、改进、质疑或 SOTA 演进。
 - `[不确定]`：证据不足或来源质量不足。
+
+## Research / Note Depth
+
+`context_depth` 描述实际已执行的外部研究类型：none（尚无外部研究）、light（最小学术脉络）、targeted（明确问题的定向研究）、full（较全面的论文中心型研究）。deep 默认请求 light；明确的 SOTA/创新性等问题请求 targeted；完整学习档案请求 full。
+
+这些值不是完成度或严格等级。targeted 可以在单一问题上比 full 更深入；新一轮 targeted 后可记录 targeted，但保留已有 full 的内容与历史覆盖。实际可复用范围始终由 stage_status.scope、research_queries 和 source_ledger 判断，时效性结论检查 retrieved_at。
+
+`note_depth` 描述最近实际生成的笔记类型：none（尚无笔记）、compact（保存现有成果）、learning（标准长期知识库笔记）、full（完整学习档案）。在 note_metadata 记录各笔记路径、深度、版本与生成日期；生成 compact 不删除已有 learning/full 笔记。升级笔记深度复用已有成果。
+
+路由表里的 depth 是本次目标，不可在开始任务时直接覆盖实际字段。研究实际执行后更新 context_depth；部分完成或受阻由 stage_status.status/remaining 记录，不能仅凭 depth 宣称任务完成。没有新研究时保留已有 context_depth；笔记实际生成后才更新 note_depth。旧 Context 缺字段时先从已有内容恢复，无法确认时暂不填该深度字段，在 stage_status/remaining 记录待核验，不新增枚举值，也不据此重跑全部阶段。
+
+用户禁止外部资料时，本次目标为 none，不查询或引用外部缓存来补答案；已有外部记录保留但不混入本次结果。仅禁止联网时可使用已有本地或缓存来源并说明日期，不刷新在线信息。Web 不可用时记录受阻，不把计划的 light/full 当作已完成研究。
 
 ## 阶段状态与版本更新
 

@@ -15,7 +15,7 @@ A single-entry Agent Skill for **deep paper reading and learning**. It does more
 | `paper-evidence-review` | Claim → Evidence → support strength |
 | `paper-context-research` | SOTA, benchmarks, author prior work, predecessors, competitors, follow-ups, surveys, externally documented limitations |
 | `paper-method-critic` | Experimental design, bias, confounding, statistics, reproducibility, generalization |
-| `paper-note` | Compact Markdown/Obsidian notes; an expanded learning record when requested |
+| `paper-note` | Compact saves, standard learning notes, and full learning records |
 
 The six capabilities **reuse the same context**. They are not six independent agents rereading the paper from scratch.
 
@@ -34,7 +34,22 @@ Turn everything into a durable Obsidian note.
 Read this paper completely and build a full learning record.
 ```
 
-The orchestrator selects the smallest sufficient workflow and reuses verified coverage for the matching paper version. Saving is independent of reading depth: ordinary archive requests save existing findings and gaps without starting new research. Full learning records are explicitly requested.
+## Reading modes and notes
+
+- Quick look: the paper's structure.
+- Deep reading: explanation and Claim–Evidence plus **light research context** by default: key predecessors, what changed, representative follow-ups and a useful survey.
+- Paper-only reading: say “do not use external sources” to suppress external context.
+- Full learning record: all six capabilities, adapted to the paper and available evidence.
+
+Three note formats are separate from reading depth:
+
+| Request | Format |
+|---|---|
+| “Save what we have” | Compact Note; no new research or analysis |
+| “Make an Obsidian paper note for later study” | Standard Learning Note; useful light context added when allowed |
+| “Read it fully and archive everything” | Full Learning Record |
+
+Explicit “save existing content only” remains compact even when Obsidian is mentioned. Learning notes retain unread/unevaluated gaps rather than pretending a complete reading has occurred.
 
 ## Installation
 
@@ -75,7 +90,7 @@ Only one public skill is installed:
 
 ## Search behavior
 
-External search is **paper-centered**, not a general literature-review agent. It resolves concrete open questions; deep reading does not automatically run a literature survey. Depending on the question, it can search for:
+External search is **paper-centered**, not a general literature-review agent. Deep reading defaults to light, paper-centered context rather than a broad literature survey. Research can be none, light, targeted or full. Targeted research can deepen one question even after full research. Depending on the question, it can search for:
 
 - state of the art at publication time and today;
 - benchmark definitions and known weaknesses;
@@ -92,7 +107,9 @@ External claims are stored separately from the target paper's own evidence and r
 
 ## Durable notes
 
-Ordinary notes preserve the paper identity/version, reading coverage, research question, method, core evidence, limitations, user questions, sources and unfinished items. Saving does not fill missing sections with new research. An explicitly requested full learning record can add equations, methodology critique, research lineage, comparisons, SOTA/benchmark context, follow-ups, reading paths, understanding questions and a glossary where relevant.
+Compact notes save existing findings, reading coverage, sources and unfinished items without new analysis. Standard Learning Notes organize methods and key equations, evidence, limitations, research context, important related-paper comparisons, user questions, reading paths and sources. They supplement useful light context when permitted. Full Learning Records can further expand methodology critique, author trajectory, SOTA/benchmark context, understanding questions and glossary sections.
+
+Unavailable material or search tools are reported as gaps. Explicit source restrictions override defaults. Depth labels describe work actually performed, not proof that every section is complete.
 
 ## Coverage, versions and figures
 

@@ -35,7 +35,7 @@ User asks for current SOTA in an environment without search/web access.
 Expected: clearly report the limitation and do not invent papers, rankings, or current results from memory.
 
 ## 9. Saving is independent of reading depth
-Given: only an abstract summary exists. User: “整理成长期 Obsidian 笔记。”
+Given: only an abstract summary exists. User: “只把刚才内容保存成 Obsidian 笔记，不补分析。”
 Expected: save the existing summary and its coverage/gaps; do not search or fabricate method, critique, or related work to fill a template.
 
 ## 10. Partial teaching is not full coverage
@@ -60,8 +60,8 @@ Given: a theorem paper or a survey. User requests critique.
 Expected: evaluate assumptions/proof coverage or search/selection/synthesis respectively; do not invent datasets or demand seeds and randomized trials.
 
 ## 15. Internal reading does not require a literature survey
-User: “只帮我读懂这篇论文的方法与证据。”
-Expected: structure, teacher and internal evidence review; external research only if needed to resolve a concrete prerequisite, honoring explicit no-web instructions.
+User: “只帮我读懂这篇论文的方法与证据，不查外部资料。”
+Expected: structure, teacher and internal evidence review; no external research; external prerequisites remain explicit gaps.
 
 ## 16. Search completion is scoped and dated
 Given: benchmark definitions researched previously; user now asks about current performance.
@@ -70,3 +70,43 @@ Expected: reuse stable definitions, refresh time-sensitive performance, record s
 ## 17. Critique revises evidence transparently
 Given: a claim rated Strong; a methodological review finds test leakage in the paper.
 Expected: revise the associated support assessment with location/reason, invalidate dependent summary/note statements, preserve the original author claim and user annotations.
+
+## 18. Deep reading includes light context
+User: “帮我深入精读这篇论文。”
+Expected: structure → teacher → evidence → light context. Attempt key predecessors, differences, useful follow-ups and surveys without quotas or broad SOTA scans.
+
+## 19. Explicit paper-only reading overrides defaults
+User: “只帮我读懂这篇论文，不要查外部资料。”
+Expected: deep-internal; no external search or external cached facts in this answer. Preserve existing external records without using them.
+
+## 20. Knowledge-base request defaults to Learning Note
+User: “整理成一份以后复习用的 Obsidian 论文笔记。”
+Expected: Standard Learning Note using available methods, evidence, limitations, useful light context, comparisons, reading path and sources. Internal reading gaps are explicit, not fabricated or silently marked complete.
+
+## 21. Simple save remains compact
+User: “把刚才内容保存一下。”
+Expected: Compact Note; no missing-stage execution or new research. The same holds for “只保存刚才内容到 Obsidian”.
+
+## 22. Targeted can deepen full
+Given: full context exists. User: “专门查一下这个 benchmark 后来为什么被质疑。”
+Expected: targeted gap-driven research, reusing relevant reliable evidence; do not skip because a full label exists.
+
+## 23. Old full context is not current SOTA
+Given: full context from months ago. User asks current SOTA.
+Expected: refresh current performance and retrieved_at; retain stable benchmark definitions.
+
+## 24. Learning with no external access
+Given: only an abstract; no web tool. User requests a learning note.
+Expected: partial-reading Standard Learning Note, no fabricated methods or citations; light research blocked with a reason. Do not set context_depth=light solely because it was planned.
+
+## 25. Persisted depth is not a global rank
+Given: full research and full note exist; user asks save-only, then targeted research.
+Expected: compact artifact updates note metadata without deleting full note; saving does not alter research coverage. Targeted research updates its actual scope while retaining previous full results.
+
+## 26. Full and restrictions
+User: “完整吃透并归档，但不要使用外部资料。”
+Expected: internal stages and full note, external research skipped with a stated restriction; no false claim that all six stages completed. The restriction also overrides learning defaults.
+
+## 27. Offline cache is different from prohibited external sources
+Given: verified local external sources exist; no web tool or user says “不要联网”.
+Expected: reuse permitted, dated local evidence; mark only unmet online verification blocked. If user instead says “不要使用外部资料”, exclude cached external claims from the answer while preserving the stored records.

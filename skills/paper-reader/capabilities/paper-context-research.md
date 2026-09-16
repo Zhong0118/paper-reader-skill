@@ -10,6 +10,28 @@ description: Use when a paper needs to be placed in its research context, includ
 
 先读 `references/paper-context.md`。优先使用已经存在的 `paper_internal`、`teaching` 与 `evidence_review` 来生成搜索问题；先检查 `research_queries` 和 `source_ledger`，已经查过且仍然新鲜的问题不要重复搜索。
 
+## Research Depth
+
+按入口指定的研究目标执行；先复用已核验且仍适用的材料，再补缺口。深度不以文献数量衡量。
+
+### none
+
+不启动论文外检索。quick、deep-internal 或用户明确禁止外部资料时使用；此时不加载本能力也可直接结束。目标论文引用表只能说明作者引用了什么，不能冒充已独立核验的外部研究。
+
+### light
+
+默认 deep 的轻量学术脉络，也用于有价值且允许外部研究的 Learning Note。至少尝试回答：最关键直接前置思想是什么、当前工作相对最近相关工作改变了什么、是否有帮助理解发展的代表性 follow-up、是否有适合作领域地图的 Survey/Review。
+
+按论文类型选择性补 benchmark 演化及重要缺陷、直接作者前作或重要失败/替代验证。已有可靠回答可复用；没有适用材料或可靠结果时记录缺口，不凑论文。足以帮助理解当前论文时停止，不扩展为全面 SOTA 扫描。
+
+### targeted
+
+围绕明确问题定向研究，例如首创性、发表时或当前 SOTA、作者前作、复现失败、benchmark 缺陷或特定局限。可以比 full 在单问题上更深入；已有 full 不能作为跳过新问题的理由。
+
+### full
+
+服务完整学习档案，按论文类型与实际价值选择前置工作、作者前作、竞争路线、发表时 SOTA、当前代表性进展、benchmark、后续工作、外部局限、相反证据、Survey、官方代码/数据/项目和阅读路径。强调研究地图的广度，不是系统综述，不要求每类有文献。
+
 ## 可选检索方向
 根据论文类型和用户目的选择必要项，不机械凑数：
 
@@ -50,7 +72,7 @@ description: Use when a paper needs to be placed in its research context, includ
 先列当前阅读真正未解决的问题，再选择方向，不为补齐栏目而检索。
 - 方法来源：查直接前置工作；创新性：查最相关同期工作。
 - 当前是否值得使用：查后续评测、替代路线、可比设定及成本。
-- 教学背景：只补所需前置概念；归档已有内容不触发新搜索。
+- 教学背景：只补所需前置概念；compact 归档不触发新搜索，learning 按 light 补有价值的脉络。
 - full/完整学习档案可以扩大覆盖，仍以相关性与证据缺口为准，不要求所有类别都有材料。
 
 每个问题先做一轮定向检索，优先阅读最相关的一手来源；只有尚未解决的具体缺口才继续。证据足以回答问题、可用渠道已无法推进，或达到用户时间/范围限制时停止，记录已回答与未解决项。没有固定论文配额；“未找到反证”不等于“反证不存在”。
@@ -60,14 +82,14 @@ description: Use when a paper needs to be placed in its research context, includ
 ## 输出到 Paper Context
 外部来源必须与目标论文内部证据分开记录。
 
-更新 `external_context`、`research_queries` 与 `source_ledger`：
+更新 `external_context`、`research_queries` 与 `source_ledger`，按协议记录实际 context_depth 和阶段覆盖/缺口：
 - 每个结论绑定 source id；
 - SOTA 比较写清 task / dataset / metric / setting / year；
 - Related paper 不只写标题，要写“它与当前论文的关系”；
 - 需要进一步阅读时，`reading_path` 按“先读 → 再读 → 深入读”选择有明确用途的材料，不凑数量。
 
 ## 无 Web/Search 工具时
-明确说明当前环境无法完成外部检索，只保留基于目标论文引用表可确认的内部关系；不得凭模型记忆伪造 SOTA、后续论文或作者前作。
+明确说明当前环境无法新增在线检索。用户未禁止外部资料时，可复用已核验且适用的本地/缓存外部来源，注明日期；不能把过时缓存称为当前状态。没有可用外部材料时，仅保留目标论文引用表可确认的内部关系。将尚需在线验证的问题记录为 blocked/remaining；不得凭模型记忆伪造 SOTA、后续论文或作者前作。
 
 ## 边界
 - 不替代通用 Research Agent，不从零做完整领域调研。

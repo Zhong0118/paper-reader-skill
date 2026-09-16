@@ -34,6 +34,7 @@ else:
 
 for token in [
     '唯一入口', 'quick', 'deep', 'teach', 'critique', 'archive', 'full',
+    'deep-internal', 'archive-compact', 'archive-learning', 'light context', 'targeted context',
     'paper-structure', 'paper-teacher', 'paper-evidence-review',
     'paper-context-research', 'paper-method-critic', 'paper-note',
     'Paper Context', '不要重复', '外部检索'
@@ -58,17 +59,25 @@ if not ctx.exists():
     errors.append('paper-reader: missing shared paper-context reference')
 else:
     c = ctx.read_text(encoding='utf-8')
-    for token in ['paper_internal', 'external_context', 'source_ledger', 'research_queries', 'retrieved_at']:
+    for token in ['paper_internal', 'external_context', 'source_ledger', 'research_queries', 'retrieved_at', 'context_depth', 'note_depth']:
         if token not in c:
             errors.append(f'paper-context: missing {token!r}')
 
 note = ROOT/'skills'/'paper-reader'/'capabilities'/'paper-note.md'
 if note.exists():
     nt=note.read_text(encoding='utf-8')
-    headings=['快速回忆','研究问题','核心公式','Claim–Evidence','技术发展脉络','作者研究路线','同期竞争','当前 SOTA','Benchmark','后续工作','推荐进一步阅读','Glossary']
+    headings=['Compact Note', 'Standard Learning Note', 'Full Learning Record', '快速回忆','研究问题','核心公式','Claim–Evidence','技术发展脉络','作者研究路线','同期竞争','当前 SOTA','Benchmark','后续工作','推荐进一步阅读','Glossary']
     for h in headings:
         if h not in nt:
             errors.append(f'paper-note: missing rich-note section {h!r}')
+
+# Structural depth contracts; behavioral scenarios validate the decisions.
+research = ROOT/'skills'/'paper-reader'/'capabilities'/'paper-context-research.md'
+if research.exists():
+    rt = research.read_text(encoding='utf-8')
+    for depth in ['none', 'light', 'targeted', 'full']:
+        if not re.search(r'^### ' + depth + r'\s*$', rt, re.M):
+            errors.append(f'paper-context-research: missing research depth {depth!r}')
 
 # Skill-internal paths are resolved from the skill root, including references
 # used by capability files. Detect broken resource links before publishing.
