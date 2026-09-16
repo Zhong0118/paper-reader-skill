@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.1 - 2026-09-17
+
+- Added a clear explicit invocation convention: `/paper-reader <mode> <request>`.
+- Added eight user-facing modes: quick, deep, internal, teach, context, critique, note, and full.
+- Kept natural-language semantic routing when no mode is supplied.
+- Added note submodes: compact, learning, and full.
+- Clarified that `note full` renders the current verified Context, while `full` runs the complete six-stage workflow first.
+- Clarified that slash availability depends on the host; the repository remains a portable Agent Skill and does not vendor host-specific command adapters.
+- Added precedence rules for explicit modes versus source/network/save restrictions.
+- Added behavioral scenarios and validator checks for slash-aware invocation.
+
 ## 0.4.0 - 2026-09-17
 
 - Added external research depths: none / light / targeted / full; deep defaults to light context.

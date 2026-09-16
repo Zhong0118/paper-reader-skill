@@ -2,54 +2,193 @@
 
 [中文说明](README_zh.md)
 
-A single-entry Agent Skill for **deep paper reading and learning**. It does more than summarize one PDF: it teaches the method, audits claim-to-evidence support, searches the surrounding literature, critiques methodology, and produces a durable research note.
+A single-entry Agent Skill for **deep paper reading, explanation, evidence auditing, literature context, methodology critique, and durable research notes**.
 
-## What it does
+> **Recommended explicit invocation:** `/paper-reader <mode>`. You may also omit the mode, or use natural language if your host has already loaded the skill.
 
-`paper-reader` is the only public skill. Internally it orchestrates six capabilities around one shared Paper Context:
+## 30-second start
+
+```text
+/paper-reader quick
+```
+Quick paper structure.
+
+```text
+/paper-reader deep
+```
+Deep reading plus light research context.
+
+```text
+/paper-reader internal
+```
+Deep paper-only reading with no external sources.
+
+```text
+/paper-reader teach Explain Equation 4 and Method 3.2
+```
+Focused teaching.
+
+```text
+/paper-reader context Find publication-time SOTA, author prior work, and follow-ups
+```
+Targeted external context.
+
+```text
+/paper-reader critique
+```
+Evidence and methodology critique.
+
+```text
+/paper-reader note learning
+```
+Standard long-term study / Obsidian note.
+
+```text
+/paper-reader full
+```
+Complete six-stage workflow and Full Learning Record.
+
+## Does `/paper-reader` always work as a native slash command?
+
+`paper-reader` is an **Agent Skill**, not a host-specific command plugin.
+
+- If the host exposes installed Skills through slash or explicit invocation, `/paper-reader ...` is the recommended syntax.
+- If the host does not register custom slash commands, select `paper-reader` through that host's Skill UI/mechanism, or use natural language.
+- This repository intentionally does not bind itself to Claude Code-, DSH-, or Codex-specific command directories.
+
+The invocation semantics remain the same.
+
+## User-facing modes
+
+There are 8 main modes:
+
+| Mode | Purpose | Internal behavior |
+|---|---|---|
+| `quick` | Quick understanding | structure |
+| `deep` | Deep reading | structure → teacher → evidence → light context |
+| `internal` | Deep reading without external sources | `deep-internal` |
+| `teach` | Explain methods/equations/concepts | focused teacher |
+| `context` | SOTA, benchmarks, related work, author prior work, follow-ups | targeted context research |
+| `critique` | Evidence and methodology stress test | evidence → targeted context as needed → critic |
+| `note` | Persist notes | `compact / learning / full` |
+| `full` | Complete study and archive | six-stage workflow |
+
+If you type only:
+
+```text
+/paper-reader
+```
+
+or:
+
+```text
+/paper-reader Deep-read this paper and tell me what happened afterward.
+```
+
+the skill infers the mode from the remaining natural language.
+
+Mode names are explicit controls, **not mandatory trigger keywords**.
+
+## Note submodes
+
+### Compact
+
+```text
+/paper-reader note compact
+```
+
+Save existing findings only. No new research or missing-stage execution.
+
+### Learning
+
+```text
+/paper-reader note
+```
+
+or:
+
+```text
+/paper-reader note learning
+```
+
+Default knowledge-base format. Reuses existing analysis and adds useful light context when allowed.
+
+### Full-format note
+
+```text
+/paper-reader note full
+```
+
+Render a Full Learning Record from the **currently verified Paper Context**. Missing analysis remains explicitly missing.
+
+This differs from:
+
+```text
+/paper-reader full
+```
+
+which performs the complete six-stage reading workflow first and then writes the Full Learning Record.
+
+## Natural-language routing
+
+You can also simply ask:
+
+```text
+Quickly explain this paper.
+Deep-read this paper and teach the method.
+Only analyze this paper; do not use external sources.
+Explain Equation 4.
+Was this actually novel? What was the SOTA at the time?
+What are the methodological weaknesses?
+Save what we have.
+Turn this into a long-term Obsidian paper note.
+Read it completely and build a full learning record.
+```
+
+Explicit mode wins over inferred intent, but explicit source/network/save restrictions take precedence over mode defaults.
+
+## Six internal capabilities
+
+Only `paper-reader` is public:
 
 | Capability | Responsibility |
 |---|---|
 | `paper-structure` | Research question, argument, method backbone, contributions, experiments, results |
-| `paper-teacher` | Concepts, equations, mechanisms, and step-by-step explanation |
+| `paper-teacher` | Concepts, equations, mechanisms, step-by-step explanation |
 | `paper-evidence-review` | Claim → Evidence → support strength |
-| `paper-context-research` | SOTA, benchmarks, author prior work, predecessors, competitors, follow-ups, surveys, externally documented limitations |
+| `paper-context-research` | SOTA, benchmarks, author prior work, predecessors, competitors, follow-ups, surveys, documented limitations |
 | `paper-method-critic` | Experimental design, bias, confounding, statistics, reproducibility, generalization |
-| `paper-note` | Compact saves, standard learning notes, and full learning records |
+| `paper-note` | Compact, Learning, and Full notes |
 
-The six capabilities **reuse the same context**. They are not six independent agents rereading the paper from scratch.
+All six reuse one shared Paper Context.
 
-## Natural-language routing
+## Research depth
 
-You normally just ask:
+External context uses:
 
 ```text
-Quickly explain what this paper does.
-Deep-read this paper and teach it to me.
-Explain Equation 4 and why it is designed this way.
-Does the evidence really support the main claim?
-Find the SOTA, benchmark context, author prior work, follow-up papers and surveys around this paper.
-What are the methodological weaknesses, including limitations found by later papers?
-Turn everything into a durable Obsidian note.
-Read this paper completely and build a full learning record.
+none
+light
+targeted
+full
 ```
 
-## Reading modes and notes
+- `none`: no external sources.
+- `light`: minimum context needed to understand the paper; default for deep reading.
+- `targeted`: deep research into one explicit question.
+- `full`: broad paper-centered research map for a full learning record.
 
-- Quick look: the paper's structure.
-- Deep reading: explanation and Claim–Evidence plus **light research context** by default: key predecessors, what changed, representative follow-ups and a useful survey.
-- Paper-only reading: say “do not use external sources” to suppress external context.
-- Full learning record: all six capabilities, adapted to the paper and available evidence.
+There is no fixed paper quota. Stop when the question is sufficiently answered or available evidence/tools cannot resolve the remaining gap.
 
-Three note formats are separate from reading depth:
+## Notes
 
-| Request | Format |
-|---|---|
-| “Save what we have” | Compact Note; no new research or analysis |
-| “Make an Obsidian paper note for later study” | Standard Learning Note; useful light context added when allowed |
-| “Read it fully and archive everything” | Full Learning Record |
+Three durable note depths are supported:
 
-Explicit “save existing content only” remains compact even when Obsidian is mentioned. Learning notes retain unread/unevaluated gaps rather than pretending a complete reading has occurred.
+- Compact Note — save existing work only.
+- Standard Learning Note — default long-term knowledge-base format.
+- Full Learning Record — comprehensive format.
+
+Unavailable material remains marked as unread / unevaluated / blocked rather than fabricated.
 
 ## Installation
 
@@ -59,9 +198,7 @@ Explicit “save existing content only” remains compact even when Obsidian is 
 npx skills add https://github.com/Zhong0118/paper-reader-skill --skill paper-reader
 ```
 
-Use the global flag supported by your local `skills` CLI if you want it available across projects.
-
-### Manual shared installation
+### Shared skills directory
 
 ```bash
 git clone https://github.com/Zhong0118/paper-reader-skill.git
@@ -75,47 +212,7 @@ Only one public skill is installed:
 ```text
 ~/.agents/skills/
 └── paper-reader/
-    ├── SKILL.md
-    ├── capabilities/
-    │   ├── paper-structure.md
-    │   ├── paper-teacher.md
-    │   ├── paper-evidence-review.md
-    │   ├── paper-context-research.md
-    │   ├── paper-method-critic.md
-    │   └── paper-note.md
-    └── references/
-        ├── paper-context.md
-        └── figure-handling.md
 ```
-
-## Search behavior
-
-External search is **paper-centered**, not a general literature-review agent. Deep reading defaults to light, paper-centered context rather than a broad literature survey. Research can be none, light, targeted or full. Targeted research can deepen one question even after full research. Depending on the question, it can search for:
-
-- state of the art at publication time and today;
-- benchmark definitions and known weaknesses;
-- authors' directly related previous work;
-- key predecessors and competing approaches;
-- representative follow-up studies;
-- reproduction failures, documented limitations, or contradictory evidence;
-- high-quality surveys/reviews;
-- official code, dataset, project, and benchmark pages.
-
-Stop when the question is sufficiently answered, available channels cannot resolve the remaining gap, or the user’s budget is reached. There is no paper quota. Reuse stable findings and refresh time-sensitive claims.
-
-External claims are stored separately from the target paper's own evidence and retain source metadata. If the current agent has no web/search capability, the skill must say so rather than invent related papers.
-
-## Durable notes
-
-Compact notes save existing findings, reading coverage, sources and unfinished items without new analysis. Standard Learning Notes organize methods and key equations, evidence, limitations, research context, important related-paper comparisons, user questions, reading paths and sources. They supplement useful light context when permitted. Full Learning Records can further expand methodology critique, author trajectory, SOTA/benchmark context, understanding questions and glossary sections.
-
-Unavailable material or search tools are reported as gaps. Explicit source restrictions override defaults. Depth labels describe work actually performed, not proof that every section is complete.
-
-## Coverage, versions and figures
-
-The shared Context tracks each stage's scope, status and remaining work. Explaining one equation does not mark the whole method as understood. Changed paper versions trigger rechecking of affected claims, figures and dependent notes; user annotations are preserved.
-
-View figures when an explanation depends on them, even without archiving. When saving, select core method/flow diagrams and result figures, retain figure number, page, source version, caption and claim links, and verify the saved image and note links. Caption-only access is explicitly recorded. Model redraws are labeled separately from original figures. See [`figure-handling.md`](skills/paper-reader/references/figure-handling.md).
 
 ## Validation
 
@@ -125,27 +222,12 @@ python3 tests/validate_skills.py
 
 GitHub Actions runs the same validator on pushes and pull requests.
 
-## Publish this repository
-
-After editing the repository name/description as you like:
-
-```bash
-git init -b main
-git add .
-git commit -m "feat: initial paper-reader skill"
-gh repo create paper-reader-skill --public --source=. --remote=origin --push
-```
-
-Or run `./publish.sh paper-reader-skill public` after authenticating `gh`.
-
 ## Design and attribution
 
 - Architecture: [`docs/architecture.md`](docs/architecture.md)
 - Workflow: [`WORKFLOW.md`](WORKFLOW.md)
 - Upstream inspirations and licensing: [`ATTRIBUTION.md`](ATTRIBUTION.md)
 
-This repository contains an independently written orchestration and capability set; it does not vendor the upstream Skill files.
-
 ## License
 
-MIT. See [`LICENSE`](LICENSE).
+MIT.

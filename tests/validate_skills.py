@@ -2,6 +2,7 @@ from pathlib import Path
 import re, sys, tempfile, subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
+
 CAPS = {
     'paper-structure': ['Paper Context', '证据', '论文类型'],
     'paper-teacher': ['Paper Context', '公式', '概念', '不要重复'],
@@ -10,44 +11,51 @@ CAPS = {
     'paper-method-critic': ['Paper Context', '混杂', '统计', '方法学', 'external_context'],
     'paper-note': ['Paper Context', '知识库', 'Markdown', '相关论文', '技术发展脉络', 'Claim–Evidence'],
 }
-errors=[]
+
+errors = []
 
 orch = ROOT/'skills'/'paper-reader'/'SKILL.md'
 if not orch.exists():
     errors.append('missing skills/paper-reader/SKILL.md')
-    text=''
+    text = ''
 else:
-    text=orch.read_text(encoding='utf-8')
-    m=re.match(r'^---\n(.*?)\n---\n', text, re.S)
+    text = orch.read_text(encoding='utf-8')
+    m = re.match(r'^---\n(.*?)\n---\n', text, re.S)
     if not m:
         errors.append('paper-reader: missing YAML frontmatter')
     else:
-        fm=m.group(1)
-        name=re.search(r'^name:\s*(.+)$', fm, re.M)
-        desc=re.search(r'^description:\s*(.+)$', fm, re.M)
-        if not name or name.group(1).strip()!='paper-reader':
+        fm = m.group(1)
+        name = re.search(r'^name:\s*(.+)$', fm, re.M)
+        desc = re.search(r'^description:\s*(.+)$', fm, re.M)
+        if not name or name.group(1).strip() != 'paper-reader':
             errors.append('paper-reader: frontmatter name mismatch')
         if not desc or not desc.group(1).strip().startswith('Use when'):
             errors.append('paper-reader: description must start with Use when')
-        if desc and len(desc.group(1))>500:
+        if desc and len(desc.group(1)) > 500:
             errors.append('paper-reader: description >500 chars')
 
 for token in [
-    '唯一入口', 'quick', 'deep', 'teach', 'critique', 'archive', 'full',
-    'deep-internal', 'archive-compact', 'archive-learning', 'light context', 'targeted context',
+    '唯一入口', '/paper-reader', '显式调用', '自然语言自动路由',
+    'quick', 'deep', 'internal', 'teach', 'context', 'critique', 'note', 'full',
+    'deep-internal', 'note compact', 'note learning', 'note full',
     'paper-structure', 'paper-teacher', 'paper-evidence-review',
     'paper-context-research', 'paper-method-critic', 'paper-note',
     'Paper Context', '不要重复', '外部检索'
 ]:
     if token not in text:
-        errors.append(f'paper-reader: missing routing concept {token!r}')
+        errors.append(f'paper-reader: missing invocation/routing concept {token!r}')
+
+# Make sure the documented distinction between note full and full exists.
+for token in ['不是一回事', '完整格式', '完整六阶段']:
+    if token not in text:
+        errors.append(f'paper-reader: missing note-full/full distinction {token!r}')
 
 for name, required in CAPS.items():
     cap = ROOT/'skills'/'paper-reader'/'capabilities'/f'{name}.md'
     if not cap.exists():
         errors.append(f'paper-reader: missing internal capability {name}')
         continue
-    t=cap.read_text(encoding='utf-8')
+    t = cap.read_text(encoding='utf-8')
     for token in required:
         if token not in t:
             errors.append(f'{name}: missing required concept {token!r}')
@@ -59,19 +67,27 @@ if not ctx.exists():
     errors.append('paper-reader: missing shared paper-context reference')
 else:
     c = ctx.read_text(encoding='utf-8')
-    for token in ['paper_internal', 'external_context', 'source_ledger', 'research_queries', 'retrieved_at', 'context_depth', 'note_depth']:
+    for token in [
+        'paper_internal', 'external_context', 'source_ledger',
+        'research_queries', 'retrieved_at', 'context_depth', 'note_depth'
+    ]:
         if token not in c:
             errors.append(f'paper-context: missing {token!r}')
 
 note = ROOT/'skills'/'paper-reader'/'capabilities'/'paper-note.md'
 if note.exists():
-    nt=note.read_text(encoding='utf-8')
-    headings=['Compact Note', 'Standard Learning Note', 'Full Learning Record', '快速回忆','研究问题','核心公式','Claim–Evidence','技术发展脉络','作者研究路线','同期竞争','当前 SOTA','Benchmark','后续工作','推荐进一步阅读','Glossary']
+    nt = note.read_text(encoding='utf-8')
+    headings = [
+        'Compact Note', 'Standard Learning Note', 'Full Learning Record',
+        '快速回忆', '研究问题', '核心公式', 'Claim–Evidence',
+        '技术发展脉络', '作者研究路线', '同期竞争',
+        '当前 SOTA', 'Benchmark', '后续工作',
+        '推荐进一步阅读', 'Glossary'
+    ]
     for h in headings:
         if h not in nt:
             errors.append(f'paper-note: missing rich-note section {h!r}')
 
-# Structural depth contracts; behavioral scenarios validate the decisions.
 research = ROOT/'skills'/'paper-reader'/'capabilities'/'paper-context-research.md'
 if research.exists():
     rt = research.read_text(encoding='utf-8')
@@ -79,8 +95,6 @@ if research.exists():
         if not re.search(r'^### ' + depth + r'\s*$', rt, re.M):
             errors.append(f'paper-context-research: missing research depth {depth!r}')
 
-# Skill-internal paths are resolved from the skill root, including references
-# used by capability files. Detect broken resource links before publishing.
 skill_root = ROOT/'skills'/'paper-reader'
 for document in skill_root.rglob('*.md'):
     for relative in re.findall(r'(?:references|capabilities)/[a-z0-9-]+\.md', document.read_text(encoding='utf-8')):
@@ -91,9 +105,17 @@ public = sorted(p.name for p in (ROOT/'skills').iterdir() if p.is_dir()) if (ROO
 if public != ['paper-reader']:
     errors.append(f'only paper-reader should be public, got {public}')
 
-for path in ['README.md','README_zh.md','ATTRIBUTION.md','LICENSE','.github/workflows/validate.yml','docs/architecture.md']:
+for path in ['README.md', 'README_zh.md', 'ATTRIBUTION.md', 'LICENSE', '.github/workflows/validate.yml', 'docs/architecture.md']:
     if not (ROOT/path).exists():
         errors.append(f'missing GitHub repo file {path}')
+
+# User docs should clearly expose slash and all user-facing modes.
+for readme_path in [ROOT/'README.md', ROOT/'README_zh.md']:
+    if readme_path.exists():
+        rt = readme_path.read_text(encoding='utf-8')
+        for token in ['/paper-reader', 'quick', 'deep', 'internal', 'teach', 'context', 'critique', 'note', 'full']:
+            if token not in rt:
+                errors.append(f'{readme_path.name}: missing user-facing invocation token {token!r}')
 
 install = ROOT/'install.sh'
 if install.exists():
@@ -104,7 +126,6 @@ if install.exists():
         installed = sorted(p.name for p in Path(td).iterdir() if p.is_dir())
         if installed != ['paper-reader']:
             errors.append(f'installer must expose only paper-reader, got {installed}')
-        # Every referenced resource must survive installation byte-for-byte.
         source_root = ROOT/'skills'/'paper-reader'
         for source in source_root.rglob('*'):
             if source.is_file():
@@ -120,6 +141,7 @@ else:
 
 if errors:
     print('VALIDATION FAILED')
-    print('\n'.join('- '+e for e in errors))
+    print('\n'.join('- ' + e for e in errors))
     sys.exit(1)
-print('VALIDATION PASSED: GitHub-ready six-stage paper-reader is self-contained')
+
+print('VALIDATION PASSED: slash-aware paper-reader routing is self-contained')

@@ -2,29 +2,82 @@
 
 `paper-reader` is a single public Agent Skill that orchestrates six private capabilities around one shared Paper Context:
 
-1. `paper-structure` — extract the paper's research question, argument, method backbone, contributions, experiments and results.
-2. `paper-teacher` — teach methods, equations, mechanisms and domain concepts without repeating the summary.
-3. `paper-evidence-review` — map each major claim to the paper's own evidence.
-4. `paper-context-research` — place the paper in external literature: SOTA, benchmarks, author prior work, predecessors, competitors, follow-ups, surveys, limitations and contradictory findings.
-5. `paper-method-critic` — critique methodology using both internal evidence and, when available, external context.
-6. `paper-note` — synthesize a durable learning record with related-work comparisons and further-reading paths.
+1. `paper-structure`
+2. `paper-teacher`
+3. `paper-evidence-review`
+4. `paper-context-research`
+5. `paper-method-critic`
+6. `paper-note`
 
-The only public skill is `skills/paper-reader/SKILL.md`. Internal capability files are references loaded on demand, not separately discoverable skills.
+The only public skill is `skills/paper-reader/SKILL.md`.
+
+## Invocation layer
+
+The user-facing invocation layer is intentionally separate from the internal routing layer.
+
+Recommended explicit semantic form:
+
+```text
+/paper-reader <mode> <request>
+```
+
+User-facing modes:
+
+```text
+quick
+deep
+internal
+teach
+context
+critique
+note
+full
+```
+
+`note` has `compact / learning / full` submodes.
+
+Internal mappings preserve the existing implementation:
+
+```text
+internal      → deep-internal
+note compact  → archive-compact behavior
+note learning → archive-learning behavior
+note full     → full-format note from current verified Context
+full          → complete six-stage workflow
+```
+
+The slash form is a portable explicit-invocation convention for hosts that expose installed Skills this way. The repository does not vendor host-specific command adapters. Natural-language routing remains available.
 
 ## Source separation
 
-The shared context separates `paper_internal` from `external_context`. External claims must retain URL/DOI/title/year/source type and retrieval date when available. A later paper cannot silently rewrite what the target paper originally claimed.
+The shared context separates `paper_internal` from `external_context`. External claims retain provenance and retrieval date. Later work cannot silently rewrite what the target paper originally claimed.
 
 ## Search scope
 
-Context research is paper-centered, not an open-ended literature review. It searches only enough to answer where the target paper came from, how it compares, what happened afterward, and what limitations are documented externally.
+Context research is paper-centered, not an open-ended literature review.
+
+Research types:
+
+```text
+none / light / targeted / full
+```
+
+Deep reading defaults to light context. Targeted questions may go deeper on one issue than full research. Search remains question-driven without source quotas.
 
 ## Coverage and persistence
 
-Reading depth and archival output are independent. Compact archive saves existing results and gaps; learning archive organizes standard study notes and supplements useful light context; full explicitly fills necessary analysis. Stage status is scoped to material actually read, tied to the paper version, and supports partial or blocked work. Legacy completed_stages is only a hint. Source changes invalidate affected dependent assessments and notes while preserving unrelated findings and user annotations.
+Reading depth and archival output are independent.
 
-Notes have compact, learning and full formats. Deep reading defaults to light research; explicit paper-only reading suppresses external context. Research types none/light/targeted/full describe scope rather than a strict ranking. Targeted questions can deepen existing full coverage. Stored depths reflect actual work, with partial/blocked states tracked separately. Search remains question-driven without source quotas; stable findings are reused and current claims refreshed.
+Notes use:
+
+```text
+compact / learning / full
+```
+
+`note full` means full-format rendering of the current verified Context; it does not imply that missing stages were completed. `full` means the complete reading workflow plus the full-format note.
+
+Stage status is scoped to material actually read and tied to paper version. Source changes invalidate affected dependent assessments while preserving unrelated findings and user annotations.
 
 ## Shared figures
 
-`references/figure-handling.md` is loaded by stages that explain, assess or archive figures. It separates visual verification from saving, tracks caption-only access, and requires source/version/page/caption/claim linkage for selected assets. Original figures and model redraws remain distinct. This is a shared reference, not a seventh stage.
+`references/figure-handling.md` is used by stages that explain, assess, or archive figures. Visual verification and saving remain separate. Original figures and model redraws remain distinct.

@@ -1,15 +1,347 @@
 # Paper Reader Skill
 
-一个专门用于**真正读懂论文、讲解论文、分析证据、补齐相关文献脉络、批判方法学并沉淀长期笔记**的 Agent Skill。
+一个专门用于**真正读懂论文、讲解方法与公式、分析证据、补齐相关研究脉络、批判方法学并沉淀长期笔记**的 Agent Skill。
 
-它对外只有一个入口：`paper-reader`。你不需要记六个内部模块，更不用手动一个个调用。
+对外只有一个入口：`paper-reader`。
 
-## 它和普通论文总结 Skill 的区别
+> **最推荐的用法：**在支持 Skill 显式调用的宿主里输入 `/paper-reader <mode>`；不想记模式也没关系，直接 `/paper-reader 你的需求`，或者直接用自然语言说需求即可。
+
+---
+
+## 30 秒上手
+
+安装完成后，你可以这样用：
+
+```text
+/paper-reader quick
+```
+
+快速看懂论文。
+
+```text
+/paper-reader deep
+```
+
+深入精读，自动补一层轻量相关研究脉络。
+
+```text
+/paper-reader internal
+```
+
+只读这篇论文本身，不使用外部资料。
+
+```text
+/paper-reader teach 重点讲 Method 3.2 和式（4）
+```
+
+只讲你没懂的方法、公式或概念。
+
+```text
+/paper-reader context 查当时的 SOTA、作者前作和后续研究
+```
+
+专门查论文外部学术位置。
+
+```text
+/paper-reader critique
+```
+
+检查 Claim–Evidence、实验设计、偏差、统计、复现和后续批评。
+
+```text
+/paper-reader note learning
+```
+
+整理成适合长期复习的知识库 / Obsidian 笔记。
+
+```text
+/paper-reader full
+```
+
+从头到尾吃透，并生成完整学习档案。
+
+---
+
+## 一定要写 `/paper-reader` 吗？
+
+**不一定。**
+
+Paper Reader 有两种调用方式。
+
+### 方式 A：显式调用（推荐）
+
+```text
+/paper-reader deep 帮我把这篇论文真正讲懂
+```
+
+优点是意图最明确，尤其适合你同时安装很多 Skill 的情况。
+
+### 方式 B：自然语言自动触发
+
+```text
+帮我深入精读这篇论文，把方法和公式讲懂。
+```
+
+如果当前 Agent 已经加载 `paper-reader`，它会根据语义自动判断应该走哪个模式。
+
+### 关于 Slash Command
+
+本仓库本质上仍是 **Agent Skill**，不是绑定某个宿主的私有 Slash Command 插件。
+
+因此：
+
+- 支持把已安装 Skill 暴露为 slash / 显式 invocation 的宿主：推荐 `/paper-reader ...`；
+- 不支持自定义 slash command 的宿主：使用宿主的 Skill 选择方式，或直接自然语言调用；
+- 本 Skill 不为了实现 `/paper-reader` 而绑定 Claude Code、DSH、Codex 任一家的专有目录格式。
+
+也就是说，`/paper-reader` 是**推荐显式调用语义**，具体 UI/命令是否原生出现取决于宿主。
+
+---
+
+# 模式到底有几种？
+
+用户层面只需要记 **8 个主模式**：
+
+| 模式 | 什么时候用 | 默认行为 |
+|---|---|---|
+| `quick` | 我只想快速知道这篇讲什么 | 论文结构/核心贡献/主要结果 |
+| `deep` | 我想真正精读这篇 | 结构 → 教学 → Claim–Evidence → light context |
+| `internal` | 我只想读这篇，不要外部文献 | deep，但 `context_depth=none` |
+| `teach` | 某个公式/方法/概念没懂 | 聚焦解释指定难点 |
+| `context` | 我想查 SOTA、benchmark、作者前作、后续论文 | targeted 外部研究 |
+| `critique` | 我想知道论文靠不靠谱、有什么不足 | 证据审查 + 方法学批判 + 必要外部验证 |
+| `note` | 我要保存/整理笔记 | `compact / learning / full` 三个子模式 |
+| `full` | 我要从头吃透并完整归档 | 六阶段完整流程 |
+
+如果只输入：
+
+```text
+/paper-reader
+```
+
+或者：
+
+```text
+/paper-reader 帮我看看这篇论文值不值得继续读
+```
+
+会根据后面的自然语言自动选模式。
+
+---
+
+# Note 的 3 个子模式
+
+## 1. Compact Note
+
+```text
+/paper-reader note compact
+```
+
+适合：
+
+```text
+把刚才内容保存一下。
+```
+
+特点：
+
+- 只保存已有分析；
+- 不为了笔记模板重新搜索；
+- 不自动补 critique；
+- 不自动补没读过的方法；
+- 明确保留“未读 / 未评估 / 未解决”。
+
+---
+
+## 2. Standard Learning Note
+
+```text
+/paper-reader note
+```
+
+或：
+
+```text
+/paper-reader note learning
+```
+
+这是**推荐的日常知识库模式**。
+
+适合：
+
+```text
+整理成以后复习用的 Obsidian 论文笔记。
+```
+
+通常包含：
+
+- Paper Card；
+- Five-Minute Recall；
+- Research Question & Motivation；
+- Method；
+- 核心公式与前置知识；
+- Experiments & Evidence；
+- Claim–Evidence；
+- What It Proves / Does Not Prove；
+- Strengths & Limitations；
+- light Research Context；
+- Related Paper Comparison；
+- Learning Notes；
+- Further Reading；
+- Sources。
+
+必要且允许时，会补少量真正有价值的：
+
+- 核心前置工作；
+- 当前论文相对已有工作的变化；
+- 代表性 follow-up；
+- Survey / Review；
+- 特别重要的作者前作或 benchmark 背景。
+
+---
+
+## 3. Full Learning Record
+
+有两种方式。
+
+### 只把现有分析整理成 Full 格式
+
+```text
+/paper-reader note full
+```
+
+它只使用当前已经核验的 Paper Context。
+
+缺什么就标什么，**不会为了填满 Full 模板自动跑完六阶段**。
+
+### 真正从头完整吃透
+
+```text
+/paper-reader full
+```
+
+执行：
+
+```text
+paper-structure
+→ paper-teacher
+→ paper-evidence-review
+→ full paper-context-research
+→ paper-method-critic
+→ Full Learning Record
+```
+
+这两个命令不要混淆：
+
+```text
+note full = 完整格式
+full      = 完整工作流 + 完整格式
+```
+
+---
+
+# 不想记模式怎么办？
+
+完全可以。
+
+下面这些自然语言都会自动路由。
+
+```text
+帮我快速看看这篇论文讲了什么。
+```
+
+→ `quick`
+
+```text
+帮我深入精读这篇论文，把方法和公式真正讲懂。
+```
+
+→ `deep`
+
+```text
+只分析这篇论文，不要查外部资料。
+```
+
+→ `internal`
+
+```text
+式（4）为什么这么写？每个符号是什么意思？
+```
+
+→ `teach`
+
+```text
+它真的是首创吗？当时 SOTA 是谁？
+```
+
+→ `context`
+
+```text
+这篇论文有哪些硬伤？实验设计靠谱吗？
+```
+
+→ `critique`
+
+```text
+把刚才内容保存一下。
+```
+
+→ `note compact`
+
+```text
+整理成以后复习的 Obsidian 论文笔记。
+```
+
+→ `note learning`
+
+```text
+从头到尾吃透并做成完整学习档案。
+```
+
+→ `full`
+
+模式名是**可选的显式控制方式**，不是必须出现的关键词。
+
+---
+
+# 显式模式和自然语言冲突时听谁的？
+
+显式 mode 优先，例如：
+
+```text
+/paper-reader quick 给我看看这篇论文
+```
+
+明确走 `quick`。
+
+但用户限制优先级更高，例如：
+
+```text
+/paper-reader deep 只分析论文内部，不要外部资料
+```
+
+虽然指定 `deep`，但必须遵守“不使用外部资料”，所以实际相当于 `internal`。
+
+同理：
+
+```text
+/paper-reader note learning 只把刚才内容存下来，不要新增分析
+```
+
+应降为 compact 行为。
+
+---
+
+# 它和普通论文总结 Skill 有什么区别？
 
 普通总结通常是：
 
 ```text
-PDF → 背景 → 方法 → 实验 → 结论
+PDF
+→ 背景
+→ 方法
+→ 实验
+→ 结论
 ```
 
 Paper Reader 的目标是：
@@ -19,7 +351,7 @@ Paper Reader 的目标是：
   ↓
 结构理解
   ↓
-老师模式讲懂方法/公式/知识点
+老师模式讲懂方法 / 公式 / 知识点
   ↓
 Claim ↔ Evidence：作者到底证明了什么
   ↓
@@ -27,81 +359,95 @@ Web / 学术检索：把论文放回研究脉络
   ↓
 方法学与后续证据压力测试
   ↓
-完整论文学习档案 / 知识库 Note
+长期知识库 Note
 ```
 
-## 六个内部能力
+---
 
-| 内部 capability | 负责什么 |
+# 六个内部能力
+
+你不需要手动调用它们。
+
+| capability | 负责什么 |
 |---|---|
-| `paper-structure` | 研究问题、论文骨架、方法、贡献、实验、结果 |
+| `paper-structure` | 研究问题、论文骨架、贡献、实验、结果 |
 | `paper-teacher` | 概念、公式、机制、方法教学 |
 | `paper-evidence-review` | Claim ↔ Evidence，判断作者自己的证据够不够 |
-| `paper-context-research` | SOTA、benchmark、作者前作、前置/竞争/后续工作、Survey、外部局限与相反证据 |
-| `paper-method-critic` | 实验设计、偏差、混杂、统计、泛化、复现，并吸收外部文献证据 |
+| `paper-context-research` | SOTA、benchmark、作者前作、前置/竞争/后续工作、Survey、外部局限 |
+| `paper-method-critic` | 实验设计、偏差、混杂、统计、泛化、复现 |
 | `paper-note` | Compact / Learning / Full 三级长期笔记 |
 
-六个模块共享同一个 Paper Context，因此不是把 PDF 从头读六遍。
+六个模块共享同一份 Paper Context，不会把 PDF 从头读六遍。
 
-## 你平时怎么用
+---
 
-不用命令，直接自然语言：
+# 外部文献检索
 
-```text
-帮我快速看懂这篇论文。
-```
-→ 只做结构理解。
+研究深度分成：
 
 ```text
-帮我精读这篇论文，真正给我讲懂。
+none
+light
+targeted
+full
 ```
-→ 结构 → 教学 → Claim–Evidence → 默认 light 学术脉络。
 
-```text
-重点给我讲 Method 3.2 和式 (4)，为什么要这么设计？
-```
-→ 直接进入老师模式，只补必要上下文。
+### none
 
-```text
-这篇论文到底创新在哪？作者是不是说过头了？
-```
-→ 内部证据审查 + 外部文献定位 + 方法学批判。
+不使用论文外资料。
 
-```text
-帮我查一下这篇论文相关的 SOTA、benchmark、作者前作、后续工作和 survey。
-```
-→ 只跑 paper-centered context research，不重新总结全文。
+### light
 
-```text
-把我们前面所有内容整理成一份以后能复习的 Obsidian 笔记。
-```
-→ Standard Learning Note；复用已有分析，必要且允许时补轻量学术脉络。
+`deep` 默认使用。
 
-```text
-从头到尾把这篇论文吃透，并做成完整学习档案。
-```
-→ 六阶段全流程。
+只补理解当前论文最重要的一圈：
 
-## 外部文献检索
+- 核心前置思想；
+- 当前论文改变了什么；
+- 少量代表性 follow-up；
+- Survey/Review；
+- 必要时作者前作 / benchmark。
 
-深入精读默认补 light context：关键前置工作、当前论文改变了什么、代表性 follow-up 和领域 Survey。明确问题使用 targeted；完整档案使用 full；“只读论文，不查外部资料”使用 none。深度精读不会自动扩展成大型文献综述。
+### targeted
 
-它的原则是：**以当前论文为中心，只搜索理解这篇论文所需的一圈高价值文献。**
+围绕一个明确问题深挖，例如：
 
-可按问题选择：
+- 是不是首创；
+- 当时 SOTA；
+- 当前 SOTA；
+- 作者前作；
+- benchmark 缺陷；
+- 复现失败；
+- 某项 limitation 是否被后续证实。
 
-- 论文发表当时的 SOTA；
-- 截至当前检索日期的代表性 SOTA/进展；
-- benchmark 是什么、是否有已知缺陷；
-- 作者/课题组直接相关前作；
-- 关键前置论文；
-- 同期竞争路线；
-- 后续继承、改进、替代工作；
-- 后续复现失败、方法局限、不同结论；
-- 相关 Survey/Review；
-- 官方代码、数据集、项目页。
+### full
 
-关键点是：
+完整学习档案使用。
+
+根据论文类型选择性建立：
+
+- predecessors；
+- author previous work；
+- competing work；
+- publication-time SOTA；
+- current representative progress；
+- benchmark context；
+- follow-up；
+- external limitations；
+- contradictory findings；
+- Survey；
+- code / dataset / project；
+- reading path。
+
+没有固定论文数量配额。
+
+完成标准是：
+
+> 当前问题是否已经被足够可靠的证据回答。
+
+---
+
+# 内部事实和外部研究不会混在一起
 
 ```text
 论文内部事实          external literature
@@ -112,48 +458,98 @@ paper_internal        external_context
        最终综合，但来源不混淆
 ```
 
-因此后续论文说“这个方法有缺陷”，不会被写成“原作者自己承认了这个缺陷”。
+因此：
 
-## 阅读模式
+> 后续论文认为某方法有缺陷
 
-- 快速看看：论文骨架。
-- 深入精读：内部理解、方法讲解、Claim–Evidence 和轻量领域脉络。
-- 只读论文、不查外部：只做内部精读。
-- 完整吃透并归档：六阶段完整工作流，按材料与论文类型选择内容。
+不会被写成：
 
-## 三种笔记
+> 原论文自己承认了这个缺陷。
 
-| 你怎么说 | 产物 |
-|---|---|
-| “保存一下 / 把刚才内容记下来” | Compact Note，只保存已有成果，不新增分析或检索 |
-| “整理成论文笔记 / 放知识库 / Obsidian / 以后复习用” | Standard Learning Note，必要且允许时补有用的 light context |
-| “完整学习档案 / 从头吃透并归档” | Full Learning Record，六阶段工作流 |
+---
 
-Learning Note 组织论文身份、快速回忆、方法与公式、证据、局限、技术脉络、核心相关论文对比、后续工作、Survey、阅读路径、用户疑问和来源。它优先复用已有内部分析，未读部分明确标为缺口，不为了模板假装已完成精读。
+# 增量阅读与版本
 
-“只保存刚才内容到 Obsidian”仍是 compact。禁止外部资料时不补外部内容；工具受限或没有可靠材料时保留缺口。full 按价值展开，不要求每一章都有内容。
+Paper Context 按阶段记录：
 
-## 增量阅读与版本
+```text
+status
+scope
+remaining
+source_version
+updated_at
+```
 
-Context 按阶段记录 scope、status、remaining 和来源版本。讲过式（4）只代表该公式已覆盖；继续精读时补其他方法。旧版论文更新后，重验受影响的图表、结论及关联笔记，保留用户注释。外部检索以问题为单位记录结果，稳定结论复用，当前进展按需刷新，不凑文献数量。
+所以：
 
-## 图表怎么处理
+```text
+“式（4）已经讲懂”
+```
 
-读图与存图分开：解释依赖图片时必须实际查看；归档优先保存核心架构/流程图及支撑关键结论的结果图，次要图片保留定位即可。
+不等于：
 
-每张选中的图记录图号、页码、论文版本、来源、图注及关联 Claim，放在对应解释旁。PDF 矢量图可通过渲染页面后裁剪保存，不能假设提取内嵌位图就完整。交付前检查图像清晰完整、链接有效；只有图注可读时明确标注，不猜测箭头或数值。模型重绘与原图分开标识。详见 [图表规则](skills/paper-reader/references/figure-handling.md)。
+```text
+“整篇 Method 已经读完”
+```
 
-## 安装
+如果论文：
 
-### 从 GitHub 用 skills CLI
+```text
+arXiv v2 → v3
+```
 
-发布到你自己的 GitHub 后：
+只重验受影响的：
+
+- Figure；
+- Claim；
+- 实验结果；
+- 解释；
+- Note。
+
+不从头全部重跑，并保留用户笔记。
+
+---
+
+# 图表处理
+
+解释依赖图表时必须实际查看。
+
+区分：
+
+```text
+verified
+caption_only
+unreadable
+```
+
+归档时优先保存：
+
+- 核心方法图；
+- 流程/架构图；
+- 支撑关键 Claim 的结果图；
+- 关键消融图。
+
+保存后检查：
+
+- 图片是否完整；
+- 裁剪是否正确；
+- Markdown 链接是否有效；
+- Figure 编号是否对应；
+- 论文版本是否对应。
+
+模型重绘和论文原图必须分开标识。
+
+---
+
+# 安装
+
+## skills CLI
 
 ```bash
 npx skills add https://github.com/Zhong0118/paper-reader-skill --skill paper-reader
 ```
 
-### 安装到所有 Agent 共用目录
+## 共用 Skills 目录
 
 ```bash
 git clone https://github.com/Zhong0118/paper-reader-skill.git
@@ -162,47 +558,35 @@ chmod +x install.sh
 ./install.sh ~/.agents/skills
 ```
 
-最终全局只暴露：
+最终只暴露：
 
 ```text
 ~/.agents/skills/
 └── paper-reader/
 ```
 
-六个 capability 都藏在 `paper-reader` 内部，不会和最外层入口抢触发。
+内部六个 capability 不会和入口抢触发。
 
-## 发布到你自己的 GitHub
+---
 
-本仓库已经按 GitHub 项目整理好。解压后：
-
-```bash
-cd paper-reader-skill
-
-gh repo create paper-reader-skill \
-  --public \
-  --source=. \
-  --remote=origin \
-  --push
-```
-
-也可以直接运行：
-
-```bash
-./publish.sh paper-reader-skill public
-```
-
-如果你想先换名字，直接改仓库目录/README 再创建即可。
-
-## 验证
+# 验证
 
 ```bash
 python3 tests/validate_skills.py
 ```
 
-GitHub Actions 也会自动运行相同校验。
+GitHub Actions 也会自动执行相同校验。
 
-## 来源与许可证
+---
 
-这套 Skill 是重新设计和编写的工作流，没有直接把 5 个上游 SKILL.md 打包进来。设计参考和许可证说明见 [`ATTRIBUTION.md`](ATTRIBUTION.md)。
+# 来源与许可证
+
+这套 Skill 是重新设计和编写的工作流，没有直接把上游 5 个 `SKILL.md` 打包进来。
+
+设计参考和许可证说明见：
+
+```text
+ATTRIBUTION.md
+```
 
 MIT License。
