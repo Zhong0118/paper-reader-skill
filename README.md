@@ -41,7 +41,7 @@ The orchestrator selects the smallest sufficient workflow and reuses verified co
 ### skills CLI
 
 ```bash
-npx skills add https://github.com/<YOUR_GITHUB_USERNAME>/paper-reader-skill --skill paper-reader
+npx skills add https://github.com/Zhong0118/paper-reader-skill --skill paper-reader
 ```
 
 Use the global flag supported by your local `skills` CLI if you want it available across projects.
@@ -49,7 +49,7 @@ Use the global flag supported by your local `skills` CLI if you want it availabl
 ### Manual shared installation
 
 ```bash
-git clone https://github.com/<YOUR_GITHUB_USERNAME>/paper-reader-skill.git
+git clone https://github.com/Zhong0118/paper-reader-skill.git
 cd paper-reader-skill
 chmod +x install.sh
 ./install.sh ~/.agents/skills
