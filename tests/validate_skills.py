@@ -70,6 +70,14 @@ if note.exists():
         if h not in nt:
             errors.append(f'paper-note: missing rich-note section {h!r}')
 
+# Skill-internal paths are resolved from the skill root, including references
+# used by capability files. Detect broken resource links before publishing.
+skill_root = ROOT/'skills'/'paper-reader'
+for document in skill_root.rglob('*.md'):
+    for relative in re.findall(r'(?:references|capabilities)/[a-z0-9-]+\.md', document.read_text(encoding='utf-8')):
+        if not (skill_root/relative).is_file():
+            errors.append(f'{document.relative_to(ROOT)}: broken resource path {relative}')
+
 public = sorted(p.name for p in (ROOT/'skills').iterdir() if p.is_dir()) if (ROOT/'skills').exists() else []
 if public != ['paper-reader']:
     errors.append(f'only paper-reader should be public, got {public}')
@@ -87,6 +95,14 @@ if install.exists():
         installed = sorted(p.name for p in Path(td).iterdir() if p.is_dir())
         if installed != ['paper-reader']:
             errors.append(f'installer must expose only paper-reader, got {installed}')
+        # Every referenced resource must survive installation byte-for-byte.
+        source_root = ROOT/'skills'/'paper-reader'
+        for source in source_root.rglob('*'):
+            if source.is_file():
+                relative = source.relative_to(source_root)
+                target = Path(td)/'paper-reader'/relative
+                if not target.is_file() or target.read_bytes() != source.read_bytes():
+                    errors.append(f'installed package missing or changed resource {relative}')
         for name in CAPS:
             if not (Path(td)/'paper-reader'/'capabilities'/f'{name}.md').exists():
                 errors.append(f'installed package missing capability {name}')

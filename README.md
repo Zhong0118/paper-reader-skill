@@ -15,7 +15,7 @@ A single-entry Agent Skill for **deep paper reading and learning**. It does more
 | `paper-evidence-review` | Claim → Evidence → support strength |
 | `paper-context-research` | SOTA, benchmarks, author prior work, predecessors, competitors, follow-ups, surveys, externally documented limitations |
 | `paper-method-critic` | Experimental design, bias, confounding, statistics, reproducibility, generalization |
-| `paper-note` | A comprehensive Markdown/Obsidian learning record with related-paper comparisons |
+| `paper-note` | Compact Markdown/Obsidian notes; an expanded learning record when requested |
 
 The six capabilities **reuse the same context**. They are not six independent agents rereading the paper from scratch.
 
@@ -34,7 +34,7 @@ Turn everything into a durable Obsidian note.
 Read this paper completely and build a full learning record.
 ```
 
-The orchestrator selects the smallest sufficient workflow and reuses completed stages.
+The orchestrator selects the smallest sufficient workflow and reuses verified coverage for the matching paper version. Saving is independent of reading depth: ordinary archive requests save existing findings and gaps without starting new research. Full learning records are explicitly requested.
 
 ## Installation
 
@@ -69,12 +69,13 @@ Only one public skill is installed:
     │   ├── paper-method-critic.md
     │   └── paper-note.md
     └── references/
-        └── paper-context.md
+        ├── paper-context.md
+        └── figure-handling.md
 ```
 
 ## Search behavior
 
-External search is **paper-centered**, not a general literature-review agent. In deep/full/context/critique workflows it can search for:
+External search is **paper-centered**, not a general literature-review agent. It resolves concrete open questions; deep reading does not automatically run a literature survey. Depending on the question, it can search for:
 
 - state of the art at publication time and today;
 - benchmark definitions and known weaknesses;
@@ -85,11 +86,19 @@ External search is **paper-centered**, not a general literature-review agent. In
 - high-quality surveys/reviews;
 - official code, dataset, project, and benchmark pages.
 
+Stop when the question is sufficiently answered, available channels cannot resolve the remaining gap, or the user’s budget is reached. There is no paper quota. Reuse stable findings and refresh time-sensitive claims.
+
 External claims are stored separately from the target paper's own evidence and retain source metadata. If the current agent has no web/search capability, the skill must say so rather than invent related papers.
 
 ## Durable notes
 
-`paper-note` creates a learning record rather than an abstract rewrite. It includes method explanations, equations, Claim–Evidence, methodology critique, research lineage, author trajectory, competing work, SOTA/benchmark context, follow-up papers, surveys, a further-reading path, Socratic questions, a glossary, and a source ledger.
+Ordinary notes preserve the paper identity/version, reading coverage, research question, method, core evidence, limitations, user questions, sources and unfinished items. Saving does not fill missing sections with new research. An explicitly requested full learning record can add equations, methodology critique, research lineage, comparisons, SOTA/benchmark context, follow-ups, reading paths, understanding questions and a glossary where relevant.
+
+## Coverage, versions and figures
+
+The shared Context tracks each stage's scope, status and remaining work. Explaining one equation does not mark the whole method as understood. Changed paper versions trigger rechecking of affected claims, figures and dependent notes; user annotations are preserved.
+
+View figures when an explanation depends on them, even without archiving. When saving, select core method/flow diagrams and result figures, retain figure number, page, source version, caption and claim links, and verify the saved image and note links. Caption-only access is explicitly recorded. Model redraws are labeled separately from original figures. See [`figure-handling.md`](skills/paper-reader/references/figure-handling.md).
 
 ## Validation
 

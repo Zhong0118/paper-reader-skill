@@ -18,3 +18,13 @@ The shared context separates `paper_internal` from `external_context`. External 
 ## Search scope
 
 Context research is paper-centered, not an open-ended literature review. It searches only enough to answer where the target paper came from, how it compares, what happened afterward, and what limitations are documented externally.
+
+## Coverage and persistence
+
+Reading depth and archival output are independent. Archive saves existing results and gaps; full explicitly fills necessary analysis. Stage status is scoped to material actually read, tied to the paper version, and supports partial or blocked work. Legacy completed_stages is only a hint. Source changes invalidate affected dependent assessments and notes while preserving unrelated findings and user annotations.
+
+Ordinary notes are compact. Expanded sections are selected for an explicitly requested full record. External search is question-driven, with no source quota; stable findings are reused and current claims refreshed.
+
+## Shared figures
+
+`references/figure-handling.md` is loaded by stages that explain, assess or archive figures. It separates visual verification from saving, tracks caption-only access, and requires source/version/page/caption/claim linkage for selected assets. Original figures and model redraws remain distinct. This is a shared reference, not a seventh stage.

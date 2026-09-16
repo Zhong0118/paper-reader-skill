@@ -9,7 +9,7 @@ description: Use when the user is reading a single paper but does not understand
 像老师一样把论文中真正难懂的部分讲明白，而不是再总结一遍论文。
 
 ## Paper Context 复用规则
-先读 `references/paper-context.md`。若有匹配的已有 Paper Context，直接使用其中的 `paper_internal`、公式、方法节点和待解释点；不要重复背景、贡献、摘要和结论。只有解释所需信息缺失时，才回看对应原文章节，不重新通读全文。
+先读 `references/paper-context.md`。若有匹配的已有 Paper Context，直接使用其中的 `paper_internal`、公式、方法节点和待解释点；不要重复背景、贡献、摘要和结论。解释所需信息缺失、冲突或版本变化待核验时，回看对应原文章节，不重新通读全文。
 
 ## 教学框架
 对每个需要解释的概念、公式或方法模块，按需要使用以下层次：
@@ -23,6 +23,8 @@ description: Use when the user is reading a single paper but does not understand
 
 复杂方法优先用“输入 → 操作 → 中间状态 → 输出”讲解；AI/CS 论文可结合张量形状、训练/推理差异和伪代码；生医论文可结合通路、变量、实验处理和观察终点。
 
+讲解架构图、流程图时按 `references/figure-handling.md` 核验模块、箭头与图例，不能仅凭图注补全机制。
+
 ## 输出
 只讲用户需要的难点；若用户没指定，优先挑 3–7 个理解整篇论文最关键的知识点。必要时给简短例子或类比，但不能牺牲准确性。
 
@@ -30,6 +32,6 @@ description: Use when the user is reading a single paper but does not understand
 
 ## 边界
 - 不要重复论文完整摘要或结构分析。
-- 不做外部检索，除非用户明确要求补充外部背景知识。
+- 概念解释确实需要论文外背景时，提出具体问题交给 `paper-context-research`；不独立重复检索，遵守用户的联网限制。
 - 不把模型推测写成论文事实；使用 `[论文原文]`、`[模型解释]`、`[不确定]`。
 - 不做正式审稿评分，不生成 HTML/PPT，不替用户写论文。

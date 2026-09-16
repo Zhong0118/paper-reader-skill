@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 - 2026-09-17
+
+- Separated reading depth from archiving; compact notes save existing findings and gaps, while full records are explicit.
+- Added scoped stage status, source versions and dependent-evidence revision rules.
+- Made external research question-driven with incremental refresh and stopping conditions.
+- Added shared figure viewing, selective preservation, provenance and output verification guidance.
+- Clarified evidence ratings, abstract-only limits, theory/survey critique, and expanded behavioral scenarios.
+
 ## 0.2.0 - 2026-09-17
 
 - Added `paper-context-research` as the sixth internal capability.

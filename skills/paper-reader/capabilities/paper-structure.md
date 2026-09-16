@@ -13,12 +13,14 @@ description: Use when the user has a single academic paper and wants to understa
 
 ## 工作步骤
 1. 确认论文身份与来源质量；无法可靠读取的内容标 `[不确定]`，不要补猜。
-2. 判定论文类型：AI/算法、系统工程、实验实证、生医/临床、理论、综述或其他；按类型调整分析重点。
+2. 仅有摘要时标记覆盖范围，不据此补全方法、实验或证明；缺失全文写入 open_questions。判定论文类型：AI/算法、系统工程、实验实证、生医/临床、理论、综述或其他；按类型调整分析重点。
 3. 提取：研究问题、动机、任务/假设、方法主线、关键实验、主要结果、作者结论、作者自述局限。
 4. 提取作者明确声明的贡献，并区分：
    - `[原文声明]`：必须绑定 Section/Figure/Table/Page 等证据位置。
    - `[模型归纳]`：必须说明推导依据，不能伪装成作者声明。
 5. 将结果写入 Context 的 `paper_internal` 与 `source_map`；保留其他阶段已有内容。
+
+涉及关键图表时读取 `references/figure-handling.md`，记录是否实际查看；图注与视觉内容分开。
 
 ## 输出
 默认给用户一个紧凑结构：
@@ -27,7 +29,7 @@ description: Use when the user has a single academic paper and wants to understa
 - 方法主线（输入 → 核心处理 → 输出）
 - 关键贡献（带证据标签）
 - 最关键实验与结果
-- 论文实际证明了什么
+- 作者报告的主要结果与结论
 - 作者明确承认的局限
 
 ## 边界

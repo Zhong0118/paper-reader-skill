@@ -14,7 +14,7 @@ description: Use when the user wants a deeper methodological critique of a study
 ## 方法学检查
 先识别研究类型，再选择框架。
 
-通用：
+按研究类型选用：
 - 设计是否能回答研究问题；
 - 对照/baseline 是否合理、公平、充分；
 - 混杂、选择偏差、测量偏差、数据泄漏；
@@ -31,6 +31,9 @@ description: Use when the user wants a deeper methodological critique of a study
 - **生医/临床**：随机化、盲法、样本量、终点、混杂、批次效应、选择偏差、临床意义。
 - **观察性研究**：混杂控制、反向因果、测量误差、模型设定与稳健性。
 
+- **理论论文**：定义、假设、证明步骤、定理适用范围与反例；不套用多 seed 或临床试验要求。
+- **综述论文**：检索范围、纳入排除标准、来源覆盖、综合方式和结论边界；按叙述综述/系统综述区别要求，不编造实验。
+
 ## 外部证据增强
 若 `external_context` 有可靠来源，再检查：
 - 后续工作是否稳定复现论文核心结论；
@@ -44,7 +47,7 @@ description: Use when the user wants a deeper methodological critique of a study
 ## 输出
 按 `Strengths / Major concerns / Minor concerns / Externally supported concerns / Uncertain due to missing information / How to improve` 组织。每个问题写：**问题是什么 → 证据位置/外部来源 → 为什么影响结论 → 如何改进**。
 
-写入 Context 的 `method_critique`。
+写入 Context 的 `method_critique`。若判断改变 Claim 支持度，按 Context 合并规则修订关联条目与依赖摘要，记录变更原因；原文作者主张不随评价改变。
 
 ## 边界
 - 不为了挑刺强行制造问题；证据不足标 `[不确定]`。
