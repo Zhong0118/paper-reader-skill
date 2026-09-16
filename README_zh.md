@@ -137,13 +137,13 @@ Context 按阶段记录 scope、status、remaining 和来源版本。讲过式�
 发布到你自己的 GitHub 后：
 
 ```bash
-npx skills add https://github.com/<你的GitHub用户名>/paper-reader-skill --skill paper-reader
+npx skills add https://github.com/Zhong0118/paper-reader-skill --skill paper-reader
 ```
 
 ### 安装到所有 Agent 共用目录
 
 ```bash
-git clone https://github.com/<你的GitHub用户名>/paper-reader-skill.git
+git clone https://github.com/Zhong0118/paper-reader-skill.git
 cd paper-reader-skill
 chmod +x install.sh
 ./install.sh ~/.agents/skills
