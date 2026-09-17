@@ -197,7 +197,7 @@ Dataset/Baseline/Metric/Control/Ablation 或理论证明条件；核心 Figure/T
 ### 9. Learning Notes
 模型易错点、用户笔记、用户疑问、未解决问题分开。
 
-### 10. Further Reading
+### 10. 推荐进一步阅读（Further Reading）
 先读 → 再读 → 深入读，并说明为什么。
 
 ### 11. Sources
