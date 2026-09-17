@@ -7,7 +7,7 @@ description: Use when the user wants to read, understand, explain, critique, con
 
 ## 定位
 
-这是论文学习的**唯一公开入口**。用户不需要记内部 capability 名称。根据问题自动选择阶段，并通过 Paper Context / Collection Context 串联；**不要重复已经可靠完成的分析、检索或笔记内容**。
+这是论文学习的**唯一公开入口（唯一入口）**。用户不需要记内部 capability 名称。根据问题自动选择阶段，并通过 Paper Context / Collection Context 串联；**不要重复已经可靠完成的分析、检索或笔记内容**。
 
 先读 `references/paper-context.md`。涉及多篇论文、文件夹或横向比较时，再读 `references/collection-protocol.md`。涉及图表时按需读 `references/figure-handling.md`。
 
