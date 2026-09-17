@@ -1,83 +1,116 @@
 # Architecture
 
-`paper-reader` is a single public Agent Skill that orchestrates six private capabilities around one shared Paper Context:
+`paper-reader` remains one public Agent Skill.
+
+v0.5 has three state layers:
+
+```text
+Single Paper State
+    ↓
+Paper Context
+    ↓
+Durable Note
+
+Multiple Paper States
+    ↓
+Collection
+    ↓
+Comparison + Synthesis
+```
+
+## Internal capabilities
 
 1. `paper-structure`
 2. `paper-teacher`
 3. `paper-evidence-review`
 4. `paper-context-research`
 5. `paper-method-critic`
-6. `paper-note`
+6. `paper-compare`
+7. `paper-note`
 
-The only public skill is `skills/paper-reader/SKILL.md`.
+Only `skills/paper-reader/SKILL.md` is public.
 
-## Invocation layer
+## Paper Context as source of truth
 
-The user-facing invocation layer is intentionally separate from the internal routing layer.
+A Note is derived from Paper Context.
 
-Recommended explicit semantic form:
+Substantive changes increment `context_revision`. Notes record `synced_context_revision`.
 
-```text
-/paper-reader <mode> <request>
-```
+This supports reliable incremental synchronization without treating “stage has run” as “all knowledge is complete.”
 
-User-facing modes:
-
-```text
-quick
-deep
-internal
-teach
-context
-critique
-note
-full
-```
-
-`note` has `compact / learning / full` submodes.
-
-Internal mappings preserve the existing implementation:
+## Incremental Note Sync
 
 ```text
-internal      → deep-internal
-note compact  → archive-compact behavior
-note learning → archive-learning behavior
-note full     → full-format note from current verified Context
-full          → complete six-stage workflow
+Context update
+→ stable knowledge node
+→ affected managed region
+→ merge/revise/deduplicate
+→ preserve user content
 ```
 
-The slash form is a portable explicit-invocation convention for hosts that expose installed Skills this way. The repository does not vendor host-specific command adapters. Natural-language routing remains available.
-
-## Source separation
-
-The shared context separates `paper_internal` from `external_context`. External claims retain provenance and retrieval date. Later work cannot silently rewrite what the target paper originally claimed.
-
-## Search scope
-
-Context research is paper-centered, not an open-ended literature review.
-
-Research types:
+Policies:
 
 ```text
-none / light / targeted / full
+auto
+on-demand
+off
 ```
 
-Deep reading defaults to light context. Targeted questions may go deeper on one issue than full research. Search remains question-driven without source quotas.
+Sync does not trigger new analysis.
 
-## Coverage and persistence
+## Collection layer
 
-Reading depth and archival output are independent.
-
-Notes use:
+A collection never replaces individual Paper Contexts.
 
 ```text
-compact / learning / full
+Paper A Context ─┐
+Paper B Context ─┼─→ Manifest → Comparison → Synthesis
+Paper C Context ─┘
 ```
 
-`note full` means full-format rendering of the current verified Context; it does not imply that missing stages were completed. `full` means the complete reading workflow plus the full-format note.
+Large folders are inventoried and triaged before deeper reading.
 
-Stage status is scoped to material actually read and tied to paper version. Source changes invalidate affected dependent assessments while preserving unrelated findings and user annotations.
+Comparison axes are normalized across papers. Missing coverage is backfilled only where needed.
 
-## Shared figures
+## Separation of outputs
 
-`references/figure-handling.md` is used by stages that explain, assess, or archive figures. Visual verification and saving remain separate. Original figures and model redraws remain distinct.
+Single-paper knowledge:
+
+```text
+papers/<paper-id>/context.md
+papers/<paper-id>/note.md
+```
+
+Cross-paper knowledge:
+
+```text
+collections/<collection-id>/manifest.md
+collections/<collection-id>/comparison.md
+collections/<collection-id>/synthesis.md
+```
+
+Collection-wide synthesis is not copied wholesale into individual Notes.
+
+## Evidence semantics
+
+Cross-paper cells distinguish:
+
+```text
+reported
+derived
+not_reported
+not_assessed
+not_accessible
+not_applicable
+uncertain
+```
+
+This prevents coverage gaps from being mistaken for negative findings.
+
+## Research boundary
+
+`paper-context-research` explores literature around one target paper.
+
+`paper-compare` compares a user-defined paper set.
+
+Neither automatically becomes a general open-ended research agent.

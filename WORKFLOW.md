@@ -1,140 +1,179 @@
 # Paper Reader Workflow
 
-日常只调用 `paper-reader`。内部六个 capability 共享一份带版本和覆盖范围的 Paper Context。
+`paper-reader` 是唯一公开入口。v0.5 同时覆盖：
+
+1. 单篇论文持续精读；
+2. Note 增量同步；
+3. 多论文 Collection / Compare。
 
 ## Invocation
-
-推荐显式语法：
 
 ```text
 /paper-reader <mode> <request>
 ```
 
-如果宿主不提供原生 slash Skill invocation，则使用宿主的 Skill 选择方式或自然语言；本仓库不绑定宿主私有 command 格式。
+也支持自然语言自动路由。
 
-不指定 mode：
+## Modes
+
+| mode | workflow |
+|---|---|
+| quick | structure |
+| internal | structure → teacher → evidence |
+| deep | structure → teacher → evidence → light context |
+| teach | necessary structure → teacher |
+| context | targeted context |
+| critique | evidence → targeted context if needed → critic |
+| compare | collection inventory → normalized compare → synthesis |
+| note compact | persist current results only |
+| note learning | standard learning note |
+| note full | full-format note from current verified Context |
+| full | single-paper six-stage workflow → full note |
+
+## Single-paper state
+
+推荐：
 
 ```text
-/paper-reader 帮我深入精读这篇论文
+.paper-reader/papers/<paper-id>/
+├── context.md
+├── note.md
+└── figures/
 ```
 
-→ 根据语义自动路由。
+Paper Context 用：
 
-## User-facing modes
+```text
+context_revision
+context_depth
+note_depth
+note_sync
+stage_status
+```
 
-| 用户 mode | 内部模式/工作流 | 本次研究目标 | 笔记目标 |
-|---|---|---|---|
-| quick | structure | none | none |
-| internal | deep-internal: structure → teacher → evidence | none | none |
-| deep | structure → teacher → evidence → light context | light | none |
-| teach | necessary structure → teacher；按知识缺口补 context | none / targeted | none |
-| context | targeted context | targeted | none |
-| critique | necessary structure → evidence → targeted context when required → critic | targeted 按需 | none |
-| note compact | existing context → compact note | 不新增 | compact |
-| note / note learning | existing analysis → useful light context → learning note | light（有价值且允许时） | learning |
-| note full | existing verified context → full-format note | 不强制新增 | full |
-| full | structure → teacher → evidence → full context → critic → full note | full | full |
+### Context revision
 
-## Important distinction
+实质内容新增/修订：
+
+```text
+context_revision += 1
+```
+
+### Note sync
+
+```text
+auto
+on-demand
+off
+```
+
+auto：
+
+```text
+Context changed
+→ locate affected managed sections
+→ deduplicate
+→ merge/revise
+→ preserve user regions
+→ update synced_context_revision
+```
+
+Note sync 本身不启动新的阅读/检索。
+
+## Collection state
+
+```text
+.paper-reader/collections/<collection-id>/
+├── manifest.md
+├── comparison.md
+└── synthesis.md
+```
+
+### Large folder
+
+```text
+inventory
+→ metadata/abstract triage
+→ choose axes
+→ decide per-paper coverage
+→ targeted backfill
+→ compare
+→ synthesize
+```
+
+禁止默认 `full × N`。
+
+### Comparison
+
+用户 axes 优先。
+
+没有 axes 时，按问题推导最小充分维度。
+
+所有关键比较单元区分：
+
+```text
+reported
+derived
+not_reported
+not_assessed
+not_accessible
+not_applicable
+uncertain
+```
+
+### Incremental collection update
+
+新增论文或单篇 Context 更新：
+
+```text
+update manifest
+→ detect affected rows/cells
+→ update comparison
+→ patch dependent synthesis
+```
+
+不要重做整个 collection。
+
+## note full vs full
 
 ```text
 /paper-reader note full
 ```
 
-只把**当前已经核验的 Context**整理成 Full Learning Record 格式。
+= 现有 Context → Full Learning Record 格式。
 
 ```text
 /paper-reader full
 ```
 
-会先执行完整六阶段，再生成 Full Learning Record。
+= 单篇完整六阶段 → Full Learning Record。
 
-## Explicit mode precedence
+## Compare boundary
 
-显式 mode 优先于自动语义判断，但以下用户限制更高：
+`compare` 比较用户给定集合。
 
-1. 不使用外部资料；
-2. 不联网；
-3. 只保存已有内容；
-4. 指定论文版本/范围；
-5. 指定时间范围。
+需要 SOTA / Survey / 补领域缺失论文时，才按用户意图调用 context research。
 
-例：
+Compare 不自动变成通用 Research Agent。
 
-```text
-/paper-reader deep 不要使用外部资料
-```
-
-→ internal behavior。
-
-```text
-/paper-reader note learning 只保存已有内容
-```
-
-→ compact behavior。
-
-## Unknown mode
-
-若 `/paper-reader` 后第一个词不是已知 mode，不作为错误处理；将整段后续文本按自然语言自动路由。
-
-## Context Depth
-
-```text
-none
-light
-targeted
-full
-```
-
-- none：不做外部研究；
-- light：理解论文所需的最小学术脉络；
-- targeted：明确问题深挖；
-- full：较全面的论文中心型研究地图。
-
-targeted 与 full 不构成严格等级。已有 full 不阻止新问题研究，也不能代替当前 SOTA 的时效性刷新。
-
-## Note Depth
-
-```text
-compact
-learning
-full
-```
-
-- compact：只保存已有成果；
-- learning：标准知识库笔记；
-- full：完整格式档案。
-
-note depth 和 reading depth 是两回事。
-
-## Reuse and revision
-
-1. 核对论文身份、版本和材料质量。
-2. 用 `stage_status.scope/status/remaining` 判断是否覆盖当前问题。
-3. `paper_internal` 与 `external_context` 分开。
-4. 稳定外部结果复用；当前 SOTA 等时效性问题刷新。
-5. 新版本只重验受影响内容。
-6. 图表按 `references/figure-handling.md` 实际查看和选择性归档。
-7. 最终输出去重。
-
-## Typical continuation
+## Typical flows
 
 ```text
 /paper-reader teach 式（4）
-→ teaching scope: equation-4
+→ update teaching
+→ context_revision +1
+→ existing auto-sync Note updates the equation section
 
-/paper-reader teach 继续讲完整方法
-→ 复用式（4），补剩余方法
+/paper-reader compare 比较这个文件夹的材料类型、巨噬细胞机制和骨再生结果
+→ inventory
+→ axes
+→ targeted backfill
+→ comparison.md
+→ synthesis.md
 
-/paper-reader context 最新 benchmark 结果如何
-→ targeted refresh
-
-/paper-reader note compact
-→ 保存现有成果
-
-/paper-reader note learning
-→ 标准长期笔记
-
-/paper-reader full
-→ 完整六阶段
+新增一篇 PDF
+→ manifest add
+→ read only needed axes
+→ patch one row
+→ update dependent synthesis
 ```
